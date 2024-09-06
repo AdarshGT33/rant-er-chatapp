@@ -1,23 +1,41 @@
 import { useState } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs'
-import { Input } from '../../components/ui/input'
-import { Button } from '../..//components/ui/button'
 
-import Victory from '../../assets/victory.svg'
-import Background from '../../assets/login2.png'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import { Input } from '../../components/ui/input';
+import { Button } from '../..//components/ui/button';
+import { toast } from 'sonner';
+
+import Victory from '../../assets/victory.svg';
+import Background from '../../assets/login2.png';
 
 function Auth() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleLogin = async () => {}
+  const validateSignup = () => {
+    if( !email.length ){
+      toast.error("Email is required")
+      return false
+    }
+    if( !password.length ){
+      toast.error("Password is required")
+      return false
+    }
+    return true
+  };
 
-  const handleSignup = async () => {}
+  const handleLogin = async () => {};
+
+  const handleSignup = async () => {
+    if (validateSignup()){
+      alert("Done🫡")
+    }
+  };
 
   return (
     <div className="h-[100vh] w-[100vw] flex items-center justify-center">
-      <div className="h-[90vh] w-[90vw] bg-white border-2 border-white shadow-2xl shadow-emerald-950 text-opacity-90 md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2">
+      <div className="h-[90vh] w-[90vw] bg-white border-2 border-pink-50 shadow-2xl shadow-emerald-950 text-opacity-90 md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2">
         <div className="flex flex-col gap-10 items-center justify-center">
            <div className="flex flex-col items-center justify-center">
             <div className="flex items-center justify-center">
@@ -49,7 +67,9 @@ function Auth() {
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} className='rounded-full p-6'
                 />
-                <Button className='rounded-full p-6 bg-emerald-200' onSubmit={handleLogin}>Login</Button>
+                <Button className='rounded-full p-6 bg-emerald-200 hover:bg-emerald-900 hover:text-pink-50 transition' onSubmit={handleLogin}>
+                  Login
+                </Button>
               </TabsContent>
               <TabsContent value="Signup" className="flex flex-col gap-5">
               <Input 
@@ -71,7 +91,9 @@ function Auth() {
                 onChange={(e) => setConfirmPassword(e.target.value)} 
                 className='rounded-full p-6'
                 />
-                <Button className='rounded-full p-6 bg-emerald-200' onSubmit={handleSignup}>Signup</Button>
+                <Button className='rounded-full p-6 bg-emerald-200 hover:bg-emerald-900 hover:text-pink-50 transition' onSubmit={handleSignup}>
+                  Signup
+                </Button>
               </TabsContent>
             </Tabs>
            </div>

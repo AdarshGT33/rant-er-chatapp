@@ -3,34 +3,38 @@ import bcrypt from "bcrypt"
 
 const userSchema = new mongoose.Schema({
     email: {
-        typeof: String,
-        required: [true, "Email is required"],
+        type: String,
+        required: true,
         unique: [true, "Email must be unique"]
     },
     password: {
-        typeof: String,
+        type: String,
         required: [true, "Password is required"]
     },
     firstName: {
-        typeof: String,
+        type: String,
         required: false
     },
     lastName: {
-        typeof: String,
+        type: String,
         required: false
     },
     color: {
-        typeof: Number,
+        type: Number,
         required: false
     },
-    profile: {
-        typeof: String,
+    profileSetup: {
+        type: String,
         default: false
     }
 });
 
 userSchema.pre("save", async function(next){
-    const salt = await bcrypt.genSalt()
-    this.password = await bcrypt.hash(this.password, salt)
-    next()
+    const salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
 })
+
+const User = mongoose.model("User", userSchema)
+
+export default User;

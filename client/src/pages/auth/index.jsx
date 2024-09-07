@@ -2,18 +2,39 @@ import { useState } from 'react'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { Input } from '../../components/ui/input';
-import { Button } from '../..//components/ui/button';
+import { Button } from '../../components/ui/button';
 import { toast } from 'sonner';
 
 import Victory from '../../assets/victory.svg';
 import Background from '../../assets/login2.png';
 
+import { apiClient } from '../../lib/api-client';
+import { LOGIN_ROUTE, SIGNUP_ROUTE } from '../../utils/constants';
+import { useNavigate } from 'react-router-dom';
+
 function Auth() {
+  const navigate = useNavigate()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const validateSignup = () => {
+    if ( !email.length ) {
+      toast.error("Email is required")
+      return false
+    }
+    if( !password.length ){
+      toast.error("Password is required")
+      return false
+    }
+    if( password !== confirmPassword ){
+      toast.error("Confirm your password!")
+      return false
+    }
+    return true
+  }
+
+  const validateLogin = () => {
     if( !email.length ){
       toast.error("Email is required")
       return false
@@ -23,15 +44,41 @@ function Auth() {
       return false
     }
     return true
-  };
+  }
 
-  const handleLogin = async () => {};
-
-  const handleSignup = async () => {
-    if (validateSignup()){
-      alert("Done🫡")
+  const handleLogin = async () => {
+    if(validateLogin()){
+      const res = await apiClient.post(
+        LOGIN_ROUTE,
+        {email,password},
+        {withCredentials: true}
+      )
+      if(res.data.user.id){
+        if(res.data.user.profileSetup === true){
+          navigate('/chat')
+        }else{
+          navigate('/profile')
+        }
+      }
+      console.log({res})
     }
   };
+
+  const handleSignup = async () => {
+    if(validateSignup()){
+      const res = await apiClient.post(
+        SIGNUP_ROUTE, 
+        { email, password }, 
+        {withCredentials: true}
+      )
+      if(res.status === 201){
+        navigate('/profile')
+      }
+      console.log({ res })
+    }
+  };
+
+
 
   return (
     <div className="h-[100vh] w-[100vw] flex items-center justify-center">
@@ -45,7 +92,7 @@ function Auth() {
             <p className='font-medium text-center'>rant with us...</p>
            </div>
            <div className='flex items-center justify-center w-full'>
-            <Tabs className='w-3/4'>
+            <Tabs className='w-3/4' defaultValue='Login'>
               <TabsList className='bg-transparent rounded-none w-full'>
                 <TabsTrigger value='Login' className='data-[state=active]:bg-transparent text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-emerald-500 transition-all duration-300' >
                   Login
@@ -67,7 +114,7 @@ function Auth() {
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} className='rounded-full p-6'
                 />
-                <Button className='rounded-full p-6 bg-emerald-200 hover:bg-emerald-900 hover:text-pink-50 transition' onSubmit={handleLogin}>
+                <Button className='rounded-full p-6 bg-emerald-200 hover:bg-emerald-900 hover:text-pink-50 transition' onClick={handleLogin}>
                   Login
                 </Button>
               </TabsContent>
@@ -91,7 +138,7 @@ function Auth() {
                 onChange={(e) => setConfirmPassword(e.target.value)} 
                 className='rounded-full p-6'
                 />
-                <Button className='rounded-full p-6 bg-emerald-200 hover:bg-emerald-900 hover:text-pink-50 transition' onSubmit={handleSignup}>
+                <Button onClick={handleSignup} className='rounded-full p-6 bg-emerald-200 hover:bg-emerald-900 hover:text-pink-50 transition'>
                   Signup
                 </Button>
               </TabsContent>

@@ -23,11 +23,12 @@ app.use(express.json())
 
 app.use('/api/auth', authRoutes)
 
-mongoose
-.connect(process.env.MONGODB_URI)
-.then(console.log(`MongoDB connection is a success`))
-.catch((error) => console.log('Error connecting to mongodb', error.message))
 
 const server = app.listen(process.env.PORT, () => {
     console.log(`Server is listening at port ${process.env.PORT}`)
 })
+
+mongoose
+.connect(process.env.MONGODB_URI)
+.then(console.log(`yo Mr.White, MongoDB has been connected yo`))
+.catch((error) => console.log('Error connecting to mongodb', error.message))

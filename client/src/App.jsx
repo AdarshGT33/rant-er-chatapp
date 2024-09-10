@@ -11,13 +11,13 @@ import { GET_USER_INFO } from './utils/constants'
 const PrivateRoutes = ({children}) => {
   const { userInfo } = useAppStore()
   const isAuthenticated = !!userInfo
-  return isAuthenticated ? children : <Navigate to={"/auth"} />
+  return isAuthenticated ? children : <Navigate to="/auth" />
 }
 
 const AuthRoutes = ({children}) => {
   const { userInfo } = useAppStore()
   const isAuthenticated = !!userInfo
-  return isAuthenticated ? <Navigate to={"/chat"}/> : children
+  return isAuthenticated ? <Navigate to="/chat"/> : children
 }
 
 function App() {
@@ -31,9 +31,14 @@ function App() {
           GET_USER_INFO,
           {withCredentials: true}
         )
+        if( res.status === 200 && res.data.id ){
+          setUserInfo(res.data)
+        }
         console.log({res})
       } catch (error) {
         console.log("Error getting user info", error)
+      } finally{
+        setLoading(false)
       }
     }
     if(!userInfo){

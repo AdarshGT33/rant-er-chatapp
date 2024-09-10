@@ -88,7 +88,6 @@ export const getUserInfo = async (req, res, next) => {
         }
 
         res.status(201).json({
-            user: {
                 id: userData.id,
                 email: userData.email,
                 firstname: userData.firstName,
@@ -96,7 +95,6 @@ export const getUserInfo = async (req, res, next) => {
                 color: userData.color,
                 profileSetup: userData.profileSetup,
                 image: userData.image
-            }
         })
     } catch (error) {
         console.log(error)

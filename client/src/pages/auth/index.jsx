@@ -57,7 +57,7 @@ function Auth() {
       )
       if(res.data.user.id){
         setUserInfo(res.data.user)
-        if(!res.data.user.profileSetup){
+        if(res.data.user.profileSetup === true){
           navigate('/chat')
         }else{
           navigate('/profile')

@@ -37,13 +37,12 @@ function Profile() {
                 <AvatarImage
                   src={image}
                   alt="profile"
-                  className="object-cover w-full h-full bg-blue-300"
+                  className="object-cover w-full h-full bg-black"
                 />
               ) : (
                 <div
-                  className={`uppercase h-32 w-32 md:w-48 md:h-48 text-5xl border rounded-full flex items-center justify-center ${getColor(
-                    selectedColor
-                  )}`}
+                  className={`uppercase h-32 w-32 md:w-48 md:h-48 text-5xl border rounded-full flex items-center justify-center 
+                    ${getColor(selectedColor)}`}
                 >
                   {firstName
                     ? firstName.split("").shift()
@@ -96,7 +95,7 @@ function Profile() {
                   className={`${color} h-5 w-5 rounded-full cursor-pointer transition-all duration-300
                   ${
                     selectedColor === index
-                      ? "outline outline-white/50 outline-1"
+                      ? "outline outline-white outline-1"
                       : ""
                   }`}
                   key={index}
@@ -107,7 +106,7 @@ function Profile() {
           </div>
         </div>
         <div className="w-full">
-          <Button className="h-16 w-full bg-green-600 hover:bg-green-800 hover:text-white rounded-lg" onClick={saveChanges}>
+          <Button className="h-16 w-full transition bg-green-600 hover:bg-green-800 hover:text-white rounded-lg" onClick={saveChanges}>
             Save Changes
           </Button>
         </div>

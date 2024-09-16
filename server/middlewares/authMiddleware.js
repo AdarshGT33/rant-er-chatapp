@@ -3,6 +3,10 @@ import jwt from 'jsonwebtoken'
 export const verifyToken = async (req, res, next) => {
     try {
         const token = req.cookies.jwt
+        if(token) console.log('token mil gya...')
+        console.log(token)
+        console.log(req.cookies)
+        if(!token) console.log("token nhi mila")
         if(!token) return res.status(401).send("Authentication Error")
     
         jwt.verify(token, process.env.JWT_KEY, async (error, payload) => {

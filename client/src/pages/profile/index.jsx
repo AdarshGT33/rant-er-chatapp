@@ -1,13 +1,16 @@
 import { useNavigate } from "react-router-dom";
-import { useAppStore } from "../../store/index.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoArrowBack } from "react-icons/io5";
 import { FaPlus, FaTrash } from "react-icons/fa";
+import { toast } from "sonner";
 
+import { useAppStore } from "../../store/index.js";
 import { Avatar, AvatarImage } from "../../components/ui/avatar.jsx";
 import { colors, getColor } from "../../lib/utils.js";
 import { Input } from "../../components/ui/input.jsx";
 import { Button } from "../../components/ui/button.jsx";
+import { apiClient } from "../../lib/api-client.js";
+import { UPDATE_PROFILE_ROUTE } from "../../utils/constants.js";
 
 function Profile() {
   const navigate = useNavigate();
@@ -18,7 +21,45 @@ function Profile() {
   const [hovered, setHovered] = useState(false);
   const [selectedColor, setSelectedColor] = useState(0);
 
-  const saveChanges = async () => {};
+  useEffect(()=>{
+    if(userInfo.profileSetup){
+      setFirstName(userInfo.firstName)
+      setLastName(userInfo.lastName)
+      setSelectedColor(userInfo.color)
+    }
+  },
+  [userInfo])
+
+  const validateProfile = () => {
+    if (!firstName) {
+      toast.error("Firstname is required");
+      return false;
+    }
+    if (!lastName) {
+      toast.error("Lastname is required");
+      return false;
+    }
+    return true;
+  };
+
+  const saveChanges = async () => {
+    if (validateProfile()) {
+      try {
+        const res = await apiClient.post(
+          UPDATE_PROFILE_ROUTE,
+          { firstName, lastName, color: selectedColor },
+          { withCredentials: true }
+        );
+        if(res.status === 201 && res.data){
+          setUserInfo({...res.data})
+          toast.success("Profile updated successfully!")
+          navigate('/chat')
+        }
+      } catch (error) {
+        console.log("error saving profile changes");
+      }
+    }
+  };
 
   return (
     <div className="bg-[#030a03] h-screen flex flex-col items-center justify-center gap-10">
@@ -106,7 +147,10 @@ function Profile() {
           </div>
         </div>
         <div className="w-full">
-          <Button className="h-16 w-full transition bg-green-600 hover:bg-green-800 hover:text-white rounded-lg" onClick={saveChanges}>
+          <Button
+            className="h-16 w-full transition bg-green-600 hover:bg-green-800 hover:text-white rounded-lg"
+            onClick={saveChanges}
+          >
             Save Changes
           </Button>
         </div>

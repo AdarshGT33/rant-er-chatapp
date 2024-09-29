@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IoArrowBack } from "react-icons/io5";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { toast } from "sonner";
@@ -10,7 +10,7 @@ import { colors, getColor } from "../../lib/utils.js";
 import { Input } from "../../components/ui/input.jsx";
 import { Button } from "../../components/ui/button.jsx";
 import { apiClient } from "../../lib/api-client.js";
-import { UPDATE_PROFILE_ROUTE } from "../../utils/constants.js";
+import { ADD_PROFILE_IMAGE_ROUTE, HOST, REMOVE_PROFILE_IMAGE_ROUTE, UPDATE_PROFILE_ROUTE } from "../../utils/constants.js";
 
 function Profile() {
   const navigate = useNavigate();
@@ -20,15 +20,18 @@ function Profile() {
   const [image, setImage] = useState(null);
   const [hovered, setHovered] = useState(false);
   const [selectedColor, setSelectedColor] = useState(0);
+  const fileInputRef = useRef(null);
 
-  useEffect(()=>{
-    if(userInfo.profileSetup){
-      setFirstName(userInfo.firstName)
-      setLastName(userInfo.lastName)
-      setSelectedColor(userInfo.color)
+  useEffect(() => {
+    if (userInfo.profileSetup) {
+      setFirstName(userInfo.firstName);
+      setLastName(userInfo.lastName);
+      setSelectedColor(userInfo.color);
     }
-  },
-  [userInfo])
+    if(userInfo.image){
+      setImage(`${HOST}/${userInfo.image}`)
+    }
+  }, [userInfo]);
 
   const validateProfile = () => {
     if (!firstName) {
@@ -50,10 +53,10 @@ function Profile() {
           { firstName, lastName, color: selectedColor },
           { withCredentials: true }
         );
-        if(res.status === 201 && res.data){
-          setUserInfo({...res.data})
-          toast.success("Profile updated successfully!")
-          navigate('/chat')
+        if (res.status === 201 && res.data) {
+          setUserInfo({ ...res.data });
+          toast.success("Profile updated successfully!");
+          navigate("/chat");
         }
       } catch (error) {
         console.log("error saving profile changes");
@@ -61,10 +64,58 @@ function Profile() {
     }
   };
 
+  const handleNavigate = () => {
+    if (userInfo.profileSetup) {
+      navigate("/chat");
+    } else {
+      toast.error("Please Setup Profile");
+    }
+  };
+
+  const handleFileInputClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    console.log({ file });
+    if(file){
+      const formData = new FormData()
+      formData.append("profile-image", file)
+      const res = await apiClient.post(
+        ADD_PROFILE_IMAGE_ROUTE,
+        formData,
+        { withCredentials: true }
+      )
+      if(res.status === 200 && res.data.image){
+        setUserInfo({...userInfo, image: res.data.image})
+        toast.success("image updated successfully")
+      }
+    }
+  };
+
+  const handleDeleteImage = async () => {
+    try {
+      const res = await apiClient.delete(
+        REMOVE_PROFILE_IMAGE_ROUTE,
+        {
+          withCredentials: true
+        },
+      )
+      if(res.status === 200){
+        setUserInfo({...userInfo, image : null})
+        toast.success("Image removed successfully.")
+        setImage(null)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
   return (
     <div className="bg-[#030a03] h-screen flex flex-col items-center justify-center gap-10">
       <div className="flex flex-col gap-10 w-[80vw] md:w-max">
-        <div>
+        <div onClick={handleNavigate}>
           <IoArrowBack className="text-4xl lg:text-6xl text-white/90 cursor-pointer" />
         </div>
         <div className="grid grid-cols-2">
@@ -92,7 +143,10 @@ function Profile() {
               )}
             </Avatar>
             {hovered && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full cursor-pointer">
+              <div
+                className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full cursor-pointer"
+                onClick={image ? handleDeleteImage : handleFileInputClick}
+              >
                 {image ? (
                   <FaTrash className="text-white text-3xl cursor-pointer" />
                 ) : (
@@ -100,7 +154,14 @@ function Profile() {
                 )}
               </div>
             )}
-            {/** input here */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              onChange={handleImageChange}
+              name="profile-image"
+              accept=".png, .jpg, .jpeg, .svg, .webp"
+            />
           </div>
           <div className="min-w-32 md:min-w-64 flex gap-5 flex-col items-center justify-center text-white rounded-lg border-none">
             <div className="w-full">

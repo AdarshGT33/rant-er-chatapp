@@ -14,7 +14,7 @@ function Chat() {
     }
   },[userInfo, navigate])
   return (
-    <div>Chat ki mkc</div>
+    <div>Chat</div>
   )
 }
 

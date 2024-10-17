@@ -4,7 +4,7 @@ import { verifyToken } from '../middlewares/authMiddleware.js'
 import multer from 'multer'
 
 const authRoutes = Router()
-const upload = multer({dest: "uploads/profile/"})
+const upload = multer({dest: "/uploads/profile/"})
 
 authRoutes.post("/signup", signup)
 authRoutes.post("/login",login)

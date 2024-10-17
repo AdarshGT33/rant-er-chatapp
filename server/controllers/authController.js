@@ -90,7 +90,7 @@ export const getUserInfo = async (req, res, next) => {
       return res.status(404).send("User ID not found");
     }
 
-    res.status(201).json({
+    res.status(200).json({
       id: userData.id,
       email: userData.email,
       firstName: userData.firstName,

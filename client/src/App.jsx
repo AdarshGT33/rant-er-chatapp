@@ -10,13 +10,15 @@ import { GET_USER_INFO } from './utils/constants'
 
 const PrivateRoutes = ({children}) => {
   const { userInfo } = useAppStore()
-  const isAuthenticated = !!userInfo
+  const isAuthenticated = !!userInfo // turning isAuthenticated into a boolean value
+  console.log(isAuthenticated)
   return isAuthenticated ? children : <Navigate to="/auth" />
 }
 
 const AuthRoutes = ({children}) => {
   const { userInfo } = useAppStore()
   const isAuthenticated = !!userInfo
+  console.log("auth wala", isAuthenticated)
   return isAuthenticated ? <Navigate to="/chat"/> : children
 }
 
@@ -48,26 +50,30 @@ function App() {
     }
   },[userInfo, setUserInfo])
 
+  if(loading){
+    return <div>Loading...</div>
+  }
+
   return (
     <BrowserRouter>
       <Routes>
         /**we will use lazy suspense(not a stand) as currently loading on page will lead to loading all the pages */
         <Route 
-        path='/auth' 
+        path="/auth" 
         element={
           <AuthRoutes>
             <Auth/>
           </AuthRoutes>
         }/>
         <Route 
-        path='/chat' 
+        path="/chat" 
         element={
           <PrivateRoutes>
             <Chat/>
           </PrivateRoutes>
         }/>
         <Route 
-        path='/profile' 
+        path="/profile" 
         element={
           <PrivateRoutes>
             <Profile/>

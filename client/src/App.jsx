@@ -11,7 +11,7 @@ import { GET_USER_INFO } from './utils/constants'
 const PrivateRoutes = ({children}) => {
   const { userInfo } = useAppStore()
   const isAuthenticated = !!userInfo // turning isAuthenticated into a boolean value
-  console.log(isAuthenticated)
+  console.log("private wala",isAuthenticated)
   return isAuthenticated ? children : <Navigate to="/auth" />
 }
 

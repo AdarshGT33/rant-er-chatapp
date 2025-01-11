@@ -24,7 +24,7 @@ import { Avatar, AvatarImage } from "../../../../../../components/ui/avatar.jsx"
 import { useAppStore } from "../../../../../../store/index.js";
 
 const NewDM = () => {
-  const [ setSelectedChatType, setSelectedChatData ] = useAppStore()
+  const { setSelectedChatType, setSelectedChatData } = useAppStore();
   const [openNewContactModel, setOpenNewContactModel] = useState(false);
   const [searchedContacts, setSearchedContacts] = useState([]);
 
@@ -82,7 +82,7 @@ const NewDM = () => {
               onChange={(e) => searchContacts(e.target.value)}
             />
           </div>
-          <ScrollArea className="h-[250px]">
+          {searchedContacts.length > 0 && <ScrollArea className="h-[250px]">
             <div className="flex flex-col gap-5">
               {searchedContacts.map((contact) => (
                 <div
@@ -112,16 +112,16 @@ const NewDM = () => {
                   </div>
                   <div className="flex flex-col">
                     <span>
-                      {contact.firstName
-                        ? contact.firstName.split("").shift()
-                        : contact.email.split("").shift()}
+                      {contact.firstName && contact.lastName
+                        ? `${contact.firstName} ${contact.lastName}`
+                        : contact.email}
                     </span>
                     <span>{contact.email}</span>
                   </div>
                 </div>
               ))}
             </div>
-          </ScrollArea>
+          </ScrollArea>}
           {searchedContacts.length <= 0 && (
             <div className="flex-1 md:bg-[#1c1d25] md:flex flex-col mt-5 justify-center items-center duration-1000 transition-all">
               <Lottie

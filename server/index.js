@@ -6,6 +6,7 @@ import cors from 'cors'
 
 import authRoutes from './routes/authRoute.js'
 import contactRoutes from './routes/ContactRoute.js'
+import setupSocket from './socket.js'
 
 dotenv.config()
 
@@ -31,6 +32,8 @@ app.use('/api/contacts', contactRoutes)
 const server = app.listen(process.env.PORT, () => {
     console.log(`Server is listening at port ${process.env.PORT}`)
 })
+
+setupSocket(server)
 
 mongoose
 .connect(process.env.MONGODB_URI)

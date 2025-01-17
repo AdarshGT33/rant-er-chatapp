@@ -7,6 +7,7 @@ import cors from 'cors'
 import authRoutes from './routes/authRoute.js'
 import contactRoutes from './routes/ContactRoute.js'
 import setupSocket from './socket.js'
+import messagesRoutes from './routes/MessagesRoutes.js'
 
 dotenv.config()
 
@@ -27,6 +28,7 @@ app.use(express.json())
 
 app.use('/api/auth', authRoutes)
 app.use('/api/contacts', contactRoutes)
+app.use('/api/messages', messagesRoutes)
 
 
 const server = app.listen(process.env.PORT, () => {

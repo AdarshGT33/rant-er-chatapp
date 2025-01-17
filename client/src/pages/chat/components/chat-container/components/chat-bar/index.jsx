@@ -39,6 +39,7 @@ const ChatBar = () => {
         fileUrl: undefined
       })
     }
+    setMessage("")
   };
 
   return (

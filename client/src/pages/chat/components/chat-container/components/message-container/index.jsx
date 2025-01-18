@@ -17,6 +17,8 @@ const MessageContainer = () => {
     userInfo,
     selectedChatMessages,
     setSelectedChatMessages,
+    setIsDownloading,
+    setFileDownloadProgress,
   } = useAppStore();
   const [showImage, setShowImage] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
@@ -54,8 +56,13 @@ const MessageContainer = () => {
   };
 
   const downloadFile = async (url) => {
+    setIsDownloading(true)
+    setFileDownloadProgress(0)
     const response = await apiClient(`${HOST}/${url}`, {
       responseType: "blob",
+      onDownloadProgress: (data) => {
+        setFileDownloadProgress(Math.round((100 * data.loaded)/ data.total))
+      }
     });
     const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
@@ -65,6 +72,8 @@ const MessageContainer = () => {
     link.click();
     link.remove();
     window.URL.revokeObjectURL(urlBlob);
+    setIsDownloading(false)
+    setFileDownloadProgress(0)
   };
 
   const renderMessages = () => {
@@ -97,8 +106,8 @@ const MessageContainer = () => {
         <div
           className={`${
             message.sender !== selectedChatData._id
-              ? "bg-[#17ff59]/5 text-[#17ff59]/90 border-[#17ff59]/50"
-              : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"
+              ? "bg-[#17ff88]/5 text-white/80 border-gray-500 p-2"
+              : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20 p-2"
           } border inline-block my-1 rounded max-w-[50%] break-words`}
         >
           {message.content}

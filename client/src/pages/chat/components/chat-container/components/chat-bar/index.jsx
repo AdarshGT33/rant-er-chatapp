@@ -11,7 +11,7 @@ import { UPLOAD_FILES_ROUTE } from "../../../../../../utils/constants.js";
 const ChatBar = () => {
   const emojiRef = useRef();
   const fileInputRef = useRef();
-  const { selectedChatType, selectedChatData, userInfo } = useAppStore();
+  const { selectedChatType, selectedChatData, userInfo, setIsUploading, setFileUploadProgress } = useAppStore();
   const socket = useSocket();
   const [message, setMessage] = useState("");
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
@@ -57,11 +57,16 @@ const ChatBar = () => {
       if (file) {
         const formData = new FormData();
         formData.append("file", file);
+        setIsUploading(true)
         const response = await apiClient.post(UPLOAD_FILES_ROUTE, formData, {
           withCredentials: true,
+          onUploadProgress: (data) => {
+            setFileUploadProgress(Math.round((100 * data.loaded)/ data.total))
+          }
         });
 
         if (response.status === 200 && response.data) {
+          setIsUploading(false)
           if(selectedChatType === "contact"){
             socket.emit("sendMessage", {
               sender: userInfo.id,
@@ -75,6 +80,7 @@ const ChatBar = () => {
       }
       console.log({ file });
     } catch (error) {
+      setIsUploading(false)
       console.log("Error in handling file attachement", error);
     }
   };

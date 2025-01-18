@@ -2,13 +2,13 @@ import React, { useEffect } from "react";
 import ProfileInfo from "./components/profile-info";
 import NewDM from "./components/new-dm";
 import { apiClient } from "../../../../lib/api-client";
-import { GET_ALL_CONTACT_ROUTES } from "../../../../utils/constants";
+import { GET_ALL_CONTACT_ROUTES, GET_USER_CHANNELS_ROUTE } from "../../../../utils/constants";
 import { useAppStore } from "../../../../store/index.js";
 import ContactList from "../../../../components/contactList";
 import CreateChannel from "./components/create-channel";
 
 const ContactsContainer = () => {
-  const {directMessagesContacts, setDirectMessagesContacts, channels} = useAppStore()
+  const {directMessagesContacts, setDirectMessagesContacts, channels, setChannels} = useAppStore()
   useEffect(() => {
     try {
       const getContacts = async () => {
@@ -19,7 +19,18 @@ const ContactsContainer = () => {
           setDirectMessagesContacts(response.data.contacts);
         }
       };
+      const getChannels = async () => {
+        const response = await apiClient.get(GET_USER_CHANNELS_ROUTE, {
+          withCredentials: true,
+        });
+        if (response.data.channels) {
+          setChannels(response.data.channels);
+        }
+      };
+
       getContacts();
+      getChannels();
+      
     } catch (error) {
       console.log("Error occured while geting contacts", error)
     }

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import User from "../models/userModel.js";
-import Messages from "../models/messagesModel.js"
+import Messages from "../models/messagesModel.js";
 
 export const searchContacts = async (req, res, next) => {
   try {
@@ -27,21 +27,22 @@ export const searchContacts = async (req, res, next) => {
     return res.status(200).json({ contacts });
   } catch (error) {
     console.log({ error });
-    return res.status(500).send("Internal Server Error while searching contacts");
+    return res
+      .status(500)
+      .send("Internal Server Error while searching contacts");
   }
 };
 
-
 export const getAllContacts = async (req, res, next) => {
   try {
-    let { userId } = req
+    let { userId } = req;
 
-    userId = new mongoose.Types.ObjectId(userId)
+    userId = new mongoose.Types.ObjectId(userId);
 
     const contacts = await Messages.aggregate([
       {
         $match: {
-          $or: [{sender: userId}, {recepient: userId}],
+          $or: [{ sender: userId }, { recepient: userId }],
         },
       },
       {
@@ -51,12 +52,12 @@ export const getAllContacts = async (req, res, next) => {
         $group: {
           _id: {
             $cond: {
-              if: {$eq: ["$sender", userId]},
+              if: { $eq: ["$sender", userId] },
               then: "$recepient",
-              else: "$sender"
+              else: "$sender",
             },
           },
-          lastMessageTime: {$first: "$timestamp"}
+          lastMessageTime: { $first: "$timestamp" },
         },
       },
       {
@@ -68,7 +69,7 @@ export const getAllContacts = async (req, res, next) => {
         },
       },
       {
-        $unwind: "$contactInfo"
+        $unwind: "$contactInfo",
       },
       {
         $project: {
@@ -84,11 +85,34 @@ export const getAllContacts = async (req, res, next) => {
       {
         $sort: { timestamp: -1 },
       },
-    ])
+    ]);
 
     return res.status(200).json({ contacts });
   } catch (error) {
     console.log({ error });
-    return res.status(500).send("Internal Server Error while getting all contacts");
+    return res
+      .status(500)
+      .send("Internal Server Error while getting all contacts");
+  }
+};
+
+export const getAllLogedInUsers = async (req, res, next) => {
+  try {
+    const users = await User.find(
+      { _id: { $ne: req.userId } },
+      "firstName lastName _id email"
+    );
+
+    const contacts = users.map((user) => ({
+      label: user.firstName ? `${user.firstName} ${user.lastName}` : user.email,
+      value: user._id
+    }));
+
+    return res.status(200).json({ contacts });
+  } catch (error) {
+    console.log({ error });
+    return res
+      .status(500)
+      .send("Internal Server Error while getting all logged in users");
   }
 };

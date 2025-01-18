@@ -5,9 +5,10 @@ import { apiClient } from "../../../../lib/api-client";
 import { GET_ALL_CONTACT_ROUTES } from "../../../../utils/constants";
 import { useAppStore } from "../../../../store/index.js";
 import ContactList from "../../../../components/contactList";
+import CreateChannel from "./components/create-channel";
 
 const ContactsContainer = () => {
-  const {directMessagesContacts, setDirectMessagesContacts} = useAppStore()
+  const {directMessagesContacts, setDirectMessagesContacts, channels} = useAppStore()
   useEffect(() => {
     try {
       const getContacts = async () => {
@@ -40,6 +41,10 @@ const ContactsContainer = () => {
       <div className="my-5">
         <div className="flex items-center justify-between pr-10">
           <Title text="Channles" />
+          <CreateChannel/>
+        </div>
+        <div className="max-h-[38vh] overflow-y-auto scrollbar-hidden">
+          <ContactList contacts={channels} isChannel={true} />
         </div>
       </div>
       <ProfileInfo />

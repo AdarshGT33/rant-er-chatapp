@@ -27,3 +27,4 @@ export const GET_ALL_CONTACT_ROUTES = `${CONTACT_ROUTES}/get-all-contacts`
 export const MESSAGES_ROUTES = 'api/messages'
 
 export const GET_ALL_MESSAGES_ROUTES = `${MESSAGES_ROUTES}/get-messages`
+export const UPLOAD_FILES_ROUTE = `${MESSAGES_ROUTES}/upload-files`

@@ -31,7 +31,6 @@ function App() {
       try {
         const res = await apiClient.get(
           GET_USER_INFO,
-          {withCredentials: true}
         )
         if( res.status === 200 && res.data.id ){
           setUserInfo(res.data)

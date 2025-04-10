@@ -5,10 +5,16 @@ export const verifyToken = async (req, res, next) => {
         const token = req.cookies.jwt
         if(token) console.log('token mil gya...')
         if(!token) console.log("token nhi mila")
-        if(!token) return res.status(401).send("Authentication Error")
+            if (!token) {
+                console.log("Token missing from cookies:", req.cookies);
+                return res.status(401).send("Authentication Error");
+            }
     
         jwt.verify(token, process.env.JWT_KEY, async (error, payload) => {
-            if(error) return res.status(403).send("Invalid Token")
+            if (error) {
+                console.log("JWT verification error:", error.message);
+                return res.status(403).send("Invalid Token");
+            }
     
             req.userId = payload.userId
             next()

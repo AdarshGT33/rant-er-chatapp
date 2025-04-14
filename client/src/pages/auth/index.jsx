@@ -10,6 +10,7 @@ import Background from '../../assets/login2.png';
 
 import { apiClient } from '../../lib/api-client';
 import { LOGIN_ROUTE, SIGNUP_ROUTE } from '../../utils/constants';
+import { GET_USER_INFO } from '../../utils/constants'
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../store/index.js';
 
@@ -69,16 +70,35 @@ function Auth() {
 
   const handleSignup = async () => {
     if(validateSignup()){
-      const res = await apiClient.post(
-        SIGNUP_ROUTE, 
-        { email, password }, 
-        {withCredentials: true}
-      )
-      if(res.status === 201){
-        setUserInfo(res.data.user)
-        navigate('/profile')
+      try {
+        const res = await apiClient.post(
+          SIGNUP_ROUTE, 
+          { email, password }, 
+          {withCredentials: true}
+        )
+    
+        if (res.status === 201) {
+          // Delay to ensure browser has time to store the cookie
+          setTimeout(async () => {
+            try {
+              const info = await apiClient.get(GET_USER_INFO, {
+                withCredentials: true
+              });
+    
+              if (info.status === 200 && res.data.id) {
+                setUserInfo(res.data.user);
+    
+                // ✅ Cookie is confirmed, user info is fetched, now you can navigate
+                navigate("/profile"); // or wherever you want to go
+              }
+            } catch (error) {
+              console.log("Error fetching user info after signup", error);
+            }
+          }, 100); // Delay can be short but gives the browser breathing room
+        }
+      } catch (err) {
+        console.log("Signup error:", err);
       }
-      console.log({ res })
     }
   };
 

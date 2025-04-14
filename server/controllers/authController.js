@@ -22,8 +22,9 @@ export const signup = async (req, res, next) => {
     const user = await User.create({ email, password });
     res.cookie("jwt", createToken(email, user.id), {
       maxAge,
-      secure: true,
-      sameSite: "None",
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
     });
 
     return res.status(201).json({
@@ -61,8 +62,9 @@ export const login = async (req, res, next) => {
 
     res.cookie("token", createToken(email, user.id), {
       maxAge,
-      secure: true,
-      sameSite: "None",
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
     });
 
     res.status(201).json({

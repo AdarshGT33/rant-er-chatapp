@@ -5,8 +5,8 @@ import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
 import { toast } from 'sonner';
 
-import Victory from '../../assets/victory.svg';
-import Background from '../../assets/login2.png';
+import Victory from '../../../public/victory.svg';
+import Background from '../../../public/login2.png';
 
 import { apiClient } from '../../lib/api-client';
 import { LOGIN_ROUTE, SIGNUP_ROUTE } from '../../utils/constants';
